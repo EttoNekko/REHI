@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "REHI",
+  "version": "1.0.0",
+  "description": "Reading extension for handicapped individuals",
+  "icons": {
+    "48": "icons/icon.png"
+  },
+  "background": {},
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "48": "icons/icon.png"
+    }
+  },
+  "permissions": ["scripting"],
+  "host_permissions": ["https://*/*", "http://*/*"]
+}
