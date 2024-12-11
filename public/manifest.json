@@ -6,13 +6,18 @@
   "icons": {
     "48": "icons/icon.png"
   },
-  "background": {},
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": {
       "48": "icons/icon.png"
     }
   },
-  "permissions": ["scripting"],
+  "permissions": [
+    "scripting",
+    "contextMenus"
+  ],
   "host_permissions": ["https://*/*", "http://*/*"]
 }
