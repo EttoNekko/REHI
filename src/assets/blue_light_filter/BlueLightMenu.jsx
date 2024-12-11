@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import bluefilter from '../../features/blue_light_filters/bluelightfilter';
+import { Switch, Typography } from '@material-tailwind/react';
+import { HexAlphaColorPicker } from 'react-colorful';
 
 const BlueLightMenu = () => {
   const [opacity, setOpacity] = useState(0.3);
   const [isFilterActive, setIsFilterActive] = useState(false);
+  const [color, setColor] = useState('#aabbcc');
 
   useEffect(() => {
     // Check if the filter is active when the component mounts
@@ -14,7 +17,9 @@ const BlueLightMenu = () => {
           func: () => {
             const overlay = document.querySelector('.blue-light-filter');
             if (overlay) {
-              const currentOpacity = parseFloat(getComputedStyle(overlay).backgroundColor.split(',')[3]);
+              const currentOpacity = parseFloat(
+                getComputedStyle(overlay).backgroundColor.split(',')[3],
+              );
               return { isActive: true, opacity: currentOpacity };
             }
             return { isActive: false, opacity: 0.3 };
@@ -26,7 +31,7 @@ const BlueLightMenu = () => {
             setIsFilterActive(isActive);
             setOpacity(opacity);
           }
-        }
+        },
       );
     });
   }, []);
@@ -59,30 +64,25 @@ const BlueLightMenu = () => {
         <h2 className='text-xl font-bold'>Blue Light Filter</h2>
         <button className='absolute right-2 text-lg hover:text-gray-300'>✖</button>
       </div>
-      <p>Insert blue light filter setting Please</p>
-      {/* Toggle checkbox */}
-      <label className='flex items-center space-x-2'>
-        <input
-          type='checkbox'
+      {/*Body*/}
+      <div className='space-y-5 overflow-auto px-2 py-1'>
+        <Switch
+          color='blue'
           checked={isFilterActive}
           onChange={handleCheckboxChange}
+          label={
+            <div>
+              <Typography color='white' className='font-medium'>
+                Toggle Filter
+              </Typography>
+            </div>
+          }
+          className=''
         />
-        <span>Enable Blue Light Filter</span>
-      </label>
-      {/* Slider */}
-      <input
-        type='range'
-        min='0.2'
-        max='0.8'
-        step='0.01'
-        value={opacity}
-        className='slider'
-        id='intensity'
-        style={{ width: '100%' }}
-        onChange={handleSliderChange}
-      />
+        <HexAlphaColorPicker color={color} onChange={setColor} />
+      </div>
     </div>
   );
-}
+};
 
 export default BlueLightMenu;

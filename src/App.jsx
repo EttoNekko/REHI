@@ -39,19 +39,6 @@ function App() {
     setActiveButton((prevActiveButton) => (prevActiveButton === index ? null : index));
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (buttonContainerRef.current && !buttonContainerRef.current.contains(event.target)) {
-        setActiveButton(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
     <>
       <div className='flex h-80 w-fit flex-row justify-center bg-transparent'>
