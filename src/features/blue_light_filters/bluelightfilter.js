@@ -1,10 +1,11 @@
-const bluefilter = async (opacity) => {
+const bluefilter = async (color) => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: (opacity) => {
-      if (opacity === 0) {
-        // Remove the filter if opacity is 0
+    func: (color) => {
+      // Check if the color opacity is 00
+      if (color.endsWith('00')) {
+        // Remove the filter if opacity is 00
         const overlay = document.querySelector('.blue-light-filter');
         if (overlay) {
           overlay.remove();
@@ -24,7 +25,7 @@ const bluefilter = async (opacity) => {
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(214, 127, 45, ${opacity}); /* Adjust the color and opacity as needed */
+        background-color: ${color}; /* Adjust the color and opacity as needed */
         pointer-events: none; /* Ensure the overlay doesn't block interactions */
         z-index: 9999; /* Ensure the overlay is on top of other elements */
       }
@@ -45,9 +46,9 @@ const bluefilter = async (opacity) => {
         overlay.className = 'blue-light-filter';
         document.body.appendChild(overlay);
       }
-      console.log('Blue light filter toggled with opacity:', opacity);
+      console.log('Blue light filter toggled with color:', color);
     },
-    args: [opacity]
+    args: [color]
   });
 }
 

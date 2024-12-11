@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import bluefilter from '../../features/blue_light_filters/bluelightfilter';
 import { Switch, Typography } from '@material-tailwind/react';
-import { HexAlphaColorPicker } from 'react-colorful';
+import { RgbaStringColorPicker } from 'react-colorful';
 
 const BlueLightMenu = () => {
-  const [opacity, setOpacity] = useState(0.3);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [color, setColor] = useState('#aabbcc');
+  const [color, setColor] = useState('rgba(18, 46, 46, 0.46)');
 
   useEffect(() => {
     // Check if the filter is active when the component mounts
@@ -17,43 +16,43 @@ const BlueLightMenu = () => {
           func: () => {
             const overlay = document.querySelector('.blue-light-filter');
             if (overlay) {
-              const currentOpacity = parseFloat(
-                getComputedStyle(overlay).backgroundColor.split(',')[3],
-              );
-              return { isActive: true, opacity: currentOpacity };
+              const currentColor = getComputedStyle(overlay).backgroundColor;
+              let result = { isActive: true, color: currentColor };
+              console.log(result);
+              return result;
             }
-            return { isActive: false, opacity: 0.3 };
+            return { isActive: false, color: 'rgba(18, 46, 46, 0)' };
           },
         },
         (results) => {
-          if (results && results[0] && results[0].result) {
-            const { isActive, opacity } = results[0].result;
-            setIsFilterActive(isActive);
-            setOpacity(opacity);
-          }
+          const { isActive, color } = results[0].result;
+          console.log('Blue light filter is active:', isActive);
+          console.log('Blue light filter color:', color);
+          setIsFilterActive(isActive);
+          setColor(color);
         },
       );
     });
   }, []);
 
-  const handleSliderChange = (event) => {
-    const newOpacity = parseFloat(event.target.value);
-    setOpacity(newOpacity);
+  const handleColorChange = (event) => {
+    const newcolor = event;
+    setColor(newcolor);
     if (!isFilterActive) {
       setIsFilterActive(true);
+      return;
     }
-    bluefilter(newOpacity);
-
-    console.log(newOpacity);
+    bluefilter(newcolor);
+    // console.log(newcolor);
   };
 
   const handleCheckboxChange = (event) => {
     const isChecked = event.target.checked;
     setIsFilterActive(isChecked);
     if (isChecked) {
-      bluefilter(opacity);
+      bluefilter(color);
     } else {
-      bluefilter(0); // Set opacity to 0 to remove the filter
+      bluefilter('rgba(18, 46, 46, 0.00)'); // Set opacity to 0 to remove the filter
     }
   };
 
@@ -79,7 +78,7 @@ const BlueLightMenu = () => {
           }
           className=''
         />
-        <HexAlphaColorPicker color={color} onChange={setColor} />
+        <RgbaStringColorPicker color={color} onChange={handleColorChange} />
       </div>
     </div>
   );
