@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
+import contrastModeToggle from '../../features/contrast_mode/contrast_mode';
 
 const ContrastMenu = () => {
   const [isActive, setIsActive] = useState(false);
   const handleActiveChange = () => {
     setIsActive((prev) => !prev);
+    try {
+      contrastModeToggle();
+    } catch (error) {
+      console.error("Failed to toggle contrast mode:", error);
+    }
   };
 
   return (
