@@ -15,7 +15,7 @@
       "48": "icons/icon.png"
     }
   },
-  "permissions": ["activeTab", "scripting", "contextMenus", "tabs", "runtime"],
+  "permissions": ["activeTab", "scripting", "contextMenus", "tabs", "runtime", "storage"],
   "host_permissions": ["https://*/*", "http://*/*"],
   "content_scripts": [
     {

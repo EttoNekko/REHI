@@ -1,24 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
-import simpleModeToggle from '../../features/simple_mode/simple_mode';;
+import simpleModeToggle from '../../features/simple_mode/simple_mode';
 
 const FocusModeMenu = ({ resetToggle, setResetToggle }) => {
   const [isTunnelModeActive, setIsTunnelModeActive] = useState(false);
   const [isSimpleModeActive, setIsSimpleModeActive] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.local.get(['isSimpleModeActive'], (result) => {
+      if (result.isSimpleModeActive !== undefined) {
+        setIsSimpleModeActive(result.isSimpleModeActive);
+        if (result.isSimpleModeActive) {
+          simpleModeToggle();
+        }
+      }
+    });
+  }, []);
 
   const handleTunnelModeChange = () => {
     setIsTunnelModeActive((prev) => !prev);
   };
 
   const handleSimpleModeChange = () => {
-    setIsSimpleModeActive((prev) => !prev);
-    simpleModeToggle();
+    setIsSimpleModeActive((prev) => {
+      const newState = !prev;
+      chrome.storage.local.set({ isSimpleModeActive: newState });
+      simpleModeToggle();
+      return newState;
+    });
   };
 
   useEffect(() => {
     if (resetToggle) {
       setIsTunnelModeActive(false);
+      if (isSimpleModeActive) simpleModeToggle();
       setIsSimpleModeActive(false);
+      chrome.storage.local.set({ isSimpleModeActive: false });
       setResetToggle(false);
     }
   }, [resetToggle]);
