@@ -70,17 +70,18 @@ const BlueLightMenu = () => {
         <span>Enable Blue Light Filter</span>
       </label>
       {/* Slider */}
-      <input
-        type='range'
-        min='0.2'
-        max='0.8'
-        step='0.01'
-        value={opacity}
-        className='slider'
-        id='intensity'
-        style={{ width: '100%' }}
-        onChange={handleSliderChange}
-      />
+        <div className='text-red font-bold'></div>
+        <input
+          type='range'
+          min='0.2'
+          max='0.8'
+          step='0.01'
+          value={opacity}
+          className='slider'
+          id='intensity'
+          style={{ width: '100%' }}
+          onChange={handleSliderChange}
+        />
     </div>
   );
 }

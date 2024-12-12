@@ -41,9 +41,9 @@ function App() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (buttonContainerRef.current && !buttonContainerRef.current.contains(event.target)) {
-        setActiveButton(null);
-      }
+      // if (buttonContainerRef.current && !buttonContainerRef.current.contains(event.target)) {
+      //   setActiveButton(null);
+      // }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
