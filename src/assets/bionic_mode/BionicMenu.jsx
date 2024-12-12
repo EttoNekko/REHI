@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
-const BionicMenu = ({ resetToggle }) => {
+const BionicMenu = ({ resetToggle, setResetToggle }) => {
   const [isActive, setIsActive] = useState(false);
   const handleActiveChange = () => {
     setIsActive((prev) => !prev);
   };
 
   useEffect(() => {
-    setIsActive(false);
+    if (resetToggle) {
+      setIsActive(false);
+      setResetToggle(false);
+    }
   }, [resetToggle]);
 
   return (

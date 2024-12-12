@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
-const FocusModeMenu = ({ resetToggle }) => {
+const FocusModeMenu = ({ resetToggle, setResetToggle }) => {
   const [isTunnelModeActive, setIsTunnelModeActive] = useState(false);
   const [isSimpleModeActive, setIsSimpleModeActive] = useState(false);
   const handleTunnelModeChange = () => {
@@ -12,8 +12,11 @@ const FocusModeMenu = ({ resetToggle }) => {
   };
 
   useEffect(() => {
-    setIsTunnelModeActive(false);
-    setIsSimpleModeActive(false);
+    if (resetToggle) {
+      setIsTunnelModeActive(false);
+      setIsSimpleModeActive(false);
+      setResetToggle(false);
+    }
   }, [resetToggle]);
 
   return (

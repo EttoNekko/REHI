@@ -3,7 +3,7 @@ import bluefilter from '../../features/blue_light_filters/bluelightfilter';
 import { Switch, Typography } from '@material-tailwind/react';
 import { RgbaStringColorPicker } from 'react-colorful';
 
-const ColorFilterMenu = ({ resetToggle }) => {
+const ColorFilterMenu = ({ resetToggle, setResetToggle }) => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [color, setColor] = useState('rgba(18, 46, 46, 0.46)');
 
@@ -36,8 +36,11 @@ const ColorFilterMenu = ({ resetToggle }) => {
   }, []);
 
   useEffect(() => {
-    setIsFilterActive(false);
-    bluefilter('rgba(18, 46, 46, 0.00)');
+    if (resetToggle) {
+      setIsFilterActive(false);
+      bluefilter('rgba(18, 46, 46, 0.00)');
+      setResetToggle(false);
+    }
   }, [resetToggle]);
 
   const handleColorChange = (event) => {
