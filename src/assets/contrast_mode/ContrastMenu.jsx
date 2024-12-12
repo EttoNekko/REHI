@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
-const ContrastMenu = () => {
+const ContrastMenu = ({ resetToggle }) => {
   const [isActive, setIsActive] = useState(false);
   const handleActiveChange = () => {
     setIsActive((prev) => !prev);
   };
+
+  useEffect(() => {
+    setIsActive(false);
+  }, [resetToggle]);
 
   return (
     <div className='h-full w-60 text-white shadow-lg'>

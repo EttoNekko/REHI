@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
-const FocusModeMenu = () => {
+const FocusModeMenu = ({ resetToggle }) => {
   const [isTunnelModeActive, setIsTunnelModeActive] = useState(false);
   const [isSimpleModeActive, setIsSimpleModeActive] = useState(false);
   const handleTunnelModeChange = () => {
@@ -10,6 +10,11 @@ const FocusModeMenu = () => {
   const handleSimpleModeChange = () => {
     setIsSimpleModeActive((prev) => !prev);
   };
+
+  useEffect(() => {
+    setIsTunnelModeActive(false);
+    setIsSimpleModeActive(false);
+  }, [resetToggle]);
 
   return (
     <div className='h-full w-60 text-white shadow-lg'>

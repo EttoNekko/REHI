@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
-const BionicMenu = () => {
+const BionicMenu = ({ resetToggle }) => {
   const [isActive, setIsActive] = useState(false);
   const handleActiveChange = () => {
     setIsActive((prev) => !prev);
   };
+
+  useEffect(() => {
+    setIsActive(false);
+  }, [resetToggle]);
 
   return (
     <div className='h-full w-60 text-white shadow-lg'>
