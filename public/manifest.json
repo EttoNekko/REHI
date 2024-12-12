@@ -15,6 +15,18 @@
       "48": "icons/icon.png"
     }
   },
-  "permissions": ["activeTab", "scripting", "contextMenus"],
-  "host_permissions": ["https://*/*", "http://*/*"]
+  "permissions": ["activeTab", "scripting", "contextMenus", "tabs", "runtime"],
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["readability.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["readability.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
