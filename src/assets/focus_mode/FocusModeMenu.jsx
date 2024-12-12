@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
+import simpleModeToggle from '../../features/simple_mode/simple_mode';;
 
 const FocusModeMenu = () => {
   const [isTunnelModeActive, setIsTunnelModeActive] = useState(false);
   const [isSimpleModeActive, setIsSimpleModeActive] = useState(false);
+
   const handleTunnelModeChange = () => {
     setIsTunnelModeActive((prev) => !prev);
   };
+
   const handleSimpleModeChange = () => {
     setIsSimpleModeActive((prev) => !prev);
+    simpleModeToggle();
   };
 
   return (
