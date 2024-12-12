@@ -3,8 +3,9 @@ import FontOption from './FontOption';
 
 function FontMenu() {
   const fontOptions = [
-    { label: 'Zoom', settingLabel: '100%', settingOptions: { min: 50, max: 200 } },
-    { label: 'Fontsize', settingLabel: '16px', settingOptions: { min: 10, max: 36 } },
+    // { label: 'Zoom', settingLabel: '100%', settingOptions: { min: 50, max: 200 } },
+    // { label: 'Fontsize', settingLabel: '16px', settingOptions: { min: 10, max: 36 } },
+    // kinda pointless to have these options since they are already available in the browser
     { label: 'Line height', settingLabel: '1.5', settingOptions: { min: 1, max: 2 } },
     { label: 'Word spacing', settingLabel: '0px', settingOptions: { min: 0, max: 10 } },
     { label: 'Letter spacing', settingLabel: '0px', settingOptions: { min: 0, max: 5 } },
