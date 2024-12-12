@@ -18,8 +18,8 @@ function App() {
   const options = [
     { label: 'Font', icon: '⌨', stateIndex: 0 },
     { label: 'Contrast mode', icon: '⌨' },
-    { label: 'Blue Light filter', icon: '⌨' },
     { label: 'Color filter', icon: '⌨' },
+    { label: 'Color deficiency', icon: '⌨' },
     { label: 'Focus mode', icon: '⌨' },
     { label: 'Bionic mode', icon: '⌨' },
     { label: 'Text to Speach', icon: '⌨' },
@@ -41,21 +41,22 @@ function App() {
 
   return (
     <>
-      <div className='flex h-80 w-fit flex-row justify-center bg-transparent'>
+      <div className='flex h-[23rem] w-fit flex-row justify-center bg-transparent'>
         {/* Secondary Popup Menus */}
         {activeButton !== null && (
-          <div className='h-full w-fit overflow-auto shadow-lg'>{popupMenus[activeButton]}</div>
+          <div className='h-full w-fit overflow-y-auto bg-black shadow-lg'>
+            {popupMenus[activeButton]}
+          </div>
         )}
         <div className='relative z-50 h-full w-72 overflow-auto bg-black text-white shadow-lg'>
           {/* Header */}
-          <div className='sticky top-0 flex items-center justify-between bg-gradient-to-t from-gray-500 via-gray-800 via-30% to-black to-60% px-2 py-2'>
-            <div className='flex items-center gap-2'>
+          <div className='sticky top-0 flex items-center justify-center bg-gradient-to-t from-gray-500 via-gray-800 via-30% to-black to-60% px-2 py-2'>
+            <div className='absolute left-4 flex items-center gap-2'>
               <div className='flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-blue-500'>
                 <span className='text-sm font-bold text-white'>👁</span>
               </div>
             </div>
             <h1 className='text-2xl font-bold'>REHI</h1>
-            <button className='text-lg text-white hover:text-gray-300'>✖</button>
           </div>
 
           {/* Options */}
