@@ -4,19 +4,25 @@ import { setLineHeight, setWordSpacing, setLetterSpacing } from '../../features/
 
 const FontOption = ({ label, settingLabel, settingOptions }) => {
   const [value, setValue] = useState(settingOptions.min);
+  const [labelValue, setLabelValue] = useState(settingLabel);
 
-  const handleSliderChange = (event) => {
-    let newValue = event ? event.target.value : value;
-    setValue(newValue);
+  const handleSliderChange = (event, newValue) => {
+    if (newValue === undefined) {
+      newValue = event ? event.target.value : value;
+    }
+    setValue(parseFloat(newValue));
 
     console.log(label, newValue);
 
     if (label === 'Line height') {
       setLineHeight(newValue);
+      setLabelValue(newValue);
     } else if (label === 'Word spacing') {
       setWordSpacing(newValue);
+      setLabelValue(newValue, 'px');
     } else if (label === 'Letter spacing') {
       setLetterSpacing(newValue);
+      setLabelValue(newValue, 'px');
     } else {
       console.error('Invalid label');
     }
@@ -30,12 +36,19 @@ const FontOption = ({ label, settingLabel, settingOptions }) => {
           {label}
         </Typography>
         <Typography color='white' className='font-medium'>
-          {settingLabel}
+          {labelValue}
         </Typography>
       </div>
       {/*B&S*/}
       <div className='flex items-center justify-between'>
-        <IconButton size='sm' color='white' variant='gradient' onClick={() => handleSliderChange(null, value - 1)}>
+        <IconButton
+          size='sm'
+          color='white'
+          variant='gradient'
+          onClick={
+            () => handleSliderChange(null, value - (settingOptions.max - settingOptions.min) / 10) // 10% of the range
+          }
+        >
           <p className='text-lg'>-</p>
         </IconButton>
         <Slider
@@ -44,9 +57,17 @@ const FontOption = ({ label, settingLabel, settingOptions }) => {
           value={value}
           min={settingOptions.min}
           max={settingOptions.max}
+          step={(settingOptions.max - settingOptions.min) / 10}
           onChange={handleSliderChange}
         />
-        <IconButton size='sm' color='white' variant='gradient' onClick={() => handleSliderChange(null, value + 1)}>
+        <IconButton
+          size='sm'
+          color='white'
+          variant='gradient'
+          onClick={
+            () => handleSliderChange(null, value + (settingOptions.max - settingOptions.min) / 10) // 10% of the range
+          }
+        >
           <p className='text-lg'>+</p>
         </IconButton>
       </div>
