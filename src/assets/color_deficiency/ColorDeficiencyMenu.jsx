@@ -20,11 +20,13 @@ const ColorDeficiencyMenu = ({ resetToggle, setResetToggle }) => {
 
   useEffect(() => {
     chrome.storage.local.get(['isColorBlindActive', 'selectedColorBlindFilter'], (result) => {
-      if (result.isColorBlindActive !== undefined) {
-        setIsActive(result.isColorBlindActive);
-      }
-      if (result.selectedColorBlindFilter) {
-        setSelectedFilter(result.selectedColorBlindFilter);
+      const { isColorBlindActive, selectedColorBlindFilter } = result;
+      setIsActive(isColorBlindActive === 'true');
+      setSelectedFilter(selectedColorBlindFilter || 'normal');
+      if (isColorBlindActive === 'true') {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          injectFilter(`colorBlindFilters/${selectedColorBlindFilter}.js`, tabs[0].id);
+        });
       }
     });
   }, []);
@@ -33,20 +35,21 @@ const ColorDeficiencyMenu = ({ resetToggle, setResetToggle }) => {
     const filterEnabled = !isActive;
     setIsActive(filterEnabled);
     chrome.storage.local.set({ isColorBlindActive: filterEnabled });
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (!filterEnabled) {
+    if (!filterEnabled) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         injectFilter('colorBlindFilters/normal.js', tabs[0].id);
-        setSelectedFilter('normal');
-        chrome.storage.local.set({ selectedColorBlindFilter: 'normal' });
-      }
-    });
+      });
+      setSelectedFilter('normal');
+      chrome.storage.local.set({ selectedColorBlindFilter: 'normal' });
+    }
   };
 
   const handleFilterChange = async (filter) => {
     setIsActive(true);
     setSelectedFilter(filter);
-    chrome.storage.local.set({ isColorBlindActive: true, selectedColorBlindFilter: filter });
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+    chrome.storage.local.set({ isColorBlindActive: 'true' });
+    chrome.storage.local.set({ selectedColorBlindFilter: filter });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       injectFilter(`colorBlindFilters/${filter}.js`, tabs[0].id);
     });
   };
@@ -54,12 +57,15 @@ const ColorDeficiencyMenu = ({ resetToggle, setResetToggle }) => {
   useEffect(() => {
     if (resetToggle) {
       if (isActive) {
-        chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           injectFilter('colorBlindFilters/normal.js', tabs[0].id);
         });
         setIsActive(false);
         setSelectedFilter('normal');
-        chrome.storage.local.set({ isColorBlindActive: false, selectedColorBlindFilter: 'normal' });
+        chrome.storage.local.set({
+          isColorBlindActive: 'false',
+          selectedColorBlindFilter: 'normal',
+        });
       }
       setResetToggle(false);
     }
