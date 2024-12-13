@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
 
+import { enableBionic } from '../../features/bionic/bionic';
+
 const BionicMenu = ({ resetToggle, setResetToggle }) => {
   const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.local.get('isBionicModeActive', (result) => {
+      const isBionicModeActive = result.isBionicModeActive === 'true';
+      setIsActive(isBionicModeActive);
+      if (isBionicModeActive) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['bionic.js'],
+          });
+        });
+      }
+    });
+
+    return () => {
+      // Cleanup function to reset bionic mode when component unmounts
+      chrome.storage.local.remove('isBionicModeActive');
+    };
+  }, []);
+
   const handleActiveChange = () => {
-    setIsActive((prev) => !prev);
+    setIsActive((prev) => {
+      const newState = !prev;
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (newState) {
+          chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['bionic.js'],
+          });
+        } else {
+          chrome.tabs.reload(tabs[0].id);
+        }
+        chrome.storage.local.set({ isBionicModeActive: newState.toString() });
+      });
+      return newState;
+    });
   };
 
   useEffect(() => {
     if (resetToggle) {
-      setIsActive(false);
+      if (isActive) {
+        handleActiveChange();
+      }
       setResetToggle(false);
     }
   }, [resetToggle]);

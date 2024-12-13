@@ -1,14 +1,110 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Radio, Switch, Typography } from '@material-tailwind/react';
+import { injectFilter } from '../../features/color_blind/color_blind';
 
-const ColorDeficiencyMenu = () => {
+const ColorDeficiencyMenu = ({ resetToggle, setResetToggle }) => {
+  const [isActive, setIsActive] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState(null);
+
+  const colorBlindList = [
+    'normal',
+    'protanomaly',
+    'deuteranomaly',
+    'tritanomaly',
+    'protanopia',
+    'deuteranopia',
+    'tritanopia',
+    'achromatomaly',
+    'achromatopsia',
+  ];
+
+  useEffect(() => {
+    chrome.storage.local.get(['isColorBlindActive', 'selectedColorBlindFilter'], (result) => {
+      const { isColorBlindActive, selectedColorBlindFilter } = result;
+      setIsActive(isColorBlindActive === 'true');
+      setSelectedFilter(selectedColorBlindFilter || 'normal');
+      if (isColorBlindActive === 'true') {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          injectFilter(`colorBlindFilters/${selectedColorBlindFilter}.js`, tabs[0].id);
+        });
+      }
+    });
+  }, []);
+
+  const handleActiveChange = async () => {
+    const filterEnabled = !isActive;
+    setIsActive(filterEnabled);
+    chrome.storage.local.set({ isColorBlindActive: filterEnabled });
+    if (!filterEnabled) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        injectFilter('colorBlindFilters/normal.js', tabs[0].id);
+      });
+      setSelectedFilter('normal');
+      chrome.storage.local.set({ selectedColorBlindFilter: 'normal' });
+    }
+  };
+
+  const handleFilterChange = async (filter) => {
+    setIsActive(true);
+    setSelectedFilter(filter);
+    chrome.storage.local.set({ isColorBlindActive: 'true' });
+    chrome.storage.local.set({ selectedColorBlindFilter: filter });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      injectFilter(`colorBlindFilters/${filter}.js`, tabs[0].id);
+    });
+  };
+
+  useEffect(() => {
+    if (resetToggle) {
+      if (isActive) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          injectFilter('colorBlindFilters/normal.js', tabs[0].id);
+        });
+        setIsActive(false);
+        setSelectedFilter('normal');
+        chrome.storage.local.set({
+          isColorBlindActive: 'false',
+          selectedColorBlindFilter: 'normal',
+        });
+      }
+      setResetToggle(false);
+    }
+  }, [resetToggle]);
+
   return (
-    <div className='h-full w-60 bg-black text-white shadow-lg'>
+    <div className='h-full w-60 text-white shadow-lg'>
       {/*Header*/}
-      <div className='sticky top-0 flex items-center justify-center bg-gradient-to-t from-gray-500 via-gray-800 via-30% to-black to-60% px-1 py-2'>
-        <h2 className='text-xl font-bold'>Color Filter options</h2>
-        <button className='absolute right-2 text-lg hover:text-gray-300'>✖</button>
+      <div className='sticky top-0 z-50 flex items-center justify-center bg-gradient-to-t from-gray-500 via-gray-800 via-30% to-black to-60% px-1 py-2'>
+        <h2 className='text-xl font-bold'>Color support options</h2>
       </div>
-      <p>Insert color filter setting Please</p>
+      {/*Body*/}
+      <div className='space-y-5 px-2 py-3'>
+        <div className='flex items-center'>
+          <Switch color='blue' checked={isActive} onChange={handleActiveChange} className='' />
+          <Typography color='white' className='mr-2 font-medium'>
+            Toggle Color Blind Filter
+          </Typography>
+        </div>
+        {/*Radio list*/}
+        <div>
+          {colorBlindList
+            .filter((filter) => filter !== 'normal')
+            .map((filter, index) => (
+              <Radio
+                key={index}
+                id={`radio-${filter}`}
+                name='colorBlindFilter'
+                label={
+                  <Typography color='white' className='mr-2 font-medium'>
+                    {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  </Typography>
+                }
+                checked={selectedFilter === filter}
+                onChange={() => handleFilterChange(filter)}
+              />
+            ))}
+        </div>
+      </div>
     </div>
   );
 };

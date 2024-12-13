@@ -21,6 +21,10 @@
     {
       "matches": ["<all_urls>"],
       "js": ["readability.js"]
+    },
+    {
+      "js": ["simpleMode.js"],
+      "matches": ["https://*/*", "http://*/*"]
     }
   ],
   "web_accessible_resources": [

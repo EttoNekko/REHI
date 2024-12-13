@@ -1,15 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { Switch, Typography } from '@material-tailwind/react';
+import contrastModeToggle from '../../features/contrast_mode/contrast_mode';
 
 const ContrastMenu = ({ resetToggle, setResetToggle }) => {
   const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.local.get('isContrastModeActive', (result) => {
+      const isContrastModeActive = result.isContrastModeActive === 'true';
+      setIsActive(isContrastModeActive);
+      if (isContrastModeActive) {
+        contrastModeToggle();
+      }
+    });
+
+    return () => {
+      // Cleanup function to reset contrast mode when component unmounts
+      chrome.storage.local.remove('isContrastModeActive');
+    };
+  }, []);
+
   const handleActiveChange = () => {
-    setIsActive((prev) => !prev);
+    setIsActive((prev) => {
+      const newState = !prev;
+      try {
+        contrastModeToggle();
+        chrome.storage.local.set({ isContrastModeActive: newState.toString() });
+      } catch (error) {
+        console.error('Failed to toggle contrast mode:', error);
+        return prev;
+      }
+      return newState;
+    });
   };
 
   useEffect(() => {
     if (resetToggle) {
-      setIsActive(false);
+      if (isActive) {
+        setIsActive((prev) => {
+          const newState = !prev;
+          try {
+            contrastModeToggle();
+            chrome.storage.local.set({ isContrastModeActive: newState.toString() });
+          } catch (error) {
+            console.error('Failed to toggle contrast mode:', error);
+            return prev;
+          }
+          return newState;
+        });
+      }
       setResetToggle(false);
     }
   }, [resetToggle]);
