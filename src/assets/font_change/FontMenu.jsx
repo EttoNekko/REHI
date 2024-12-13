@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontOption from './FontOption';
+import { setFont } from '../../features/font_features/font';
 
-function FontMenu() {
+function FontMenu({ resetToggle, setResetToggle }) {
   const fontOptions = [
-    { label: 'Zoom', settingLabel: '100%', settingOptions: { min: 50, max: 200 } },
+    // { label: 'Zoom', settingLabel: '100%', settingOptions: { min: 50, max: 200 } },
+    // kinda pointless to have these options since they are already available in the browser
     { label: 'Fontsize', settingLabel: '16px', settingOptions: { min: 10, max: 36 } },
     { label: 'Line height', settingLabel: '1.5', settingOptions: { min: 1, max: 2 } },
     { label: 'Word spacing', settingLabel: '0px', settingOptions: { min: 0, max: 10 } },
     { label: 'Letter spacing', settingLabel: '0px', settingOptions: { min: 0, max: 5 } },
   ];
+
+  useEffect(() => {
+    chrome.storage.local.get(['fontChanged'], (data) => {
+      if (data.fontChanged) {
+        console.log('detect Font changed');
+        if (resetToggle) {
+          chrome.storage.local.set({ fontChanged: false });
+          console.log('Reloading page');
+          chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+            const tabId = tabs[0].id;
+            chrome.scripting.executeScript({
+              target: { tabId },
+              func: () => {
+                window.location.reload();
+              },
+            });
+          });
+        }
+      }
+    });
+    
+  }, [resetToggle]);
 
   return (
     <div className='w-70 h-full text-white shadow-lg'>
@@ -28,6 +52,19 @@ function FontMenu() {
             {index < fontOptions.length - 1 && <hr className='border-1 border-white' />}
           </React.Fragment>
         ))}
+        {/* Drop down menu to select font */}
+        <div className='flex items-center justify-between'>
+          <label className='font-medium'>Font</label>
+          <select
+            className='rounded-md bg-gray-800 p-1 text-white'
+            onChange={(e) => setFont(e.target.value)}
+          >
+            <option value='Arial'>Arial</option>
+            <option value='Comic Sans MS'>Comic Sans MS</option>
+            <option value='Segoe UI'>Segoe UI</option>
+            <option value='Verdana'>Verdana</option>
+          </select>
+        </div>
       </div>
     </div>
   );
