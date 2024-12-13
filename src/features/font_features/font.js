@@ -43,9 +43,9 @@ const setFont = (font) => {
     let tabId = tabs[0].id;
     chrome.scripting.insertCSS({
       target: { tabId: tabId, allFrames: true },
-      css: `* { font-family: ${font} !important; }`,
+      css: `* { font-family: ${font}, sans-serif !important; }`,
     });
   });
 };
 
-export { setLineHeight, setWordSpacing, setLetterSpacing, setFontSize };
+export { setLineHeight, setWordSpacing, setLetterSpacing, setFontSize, setFont };

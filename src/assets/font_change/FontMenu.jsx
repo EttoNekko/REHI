@@ -1,5 +1,6 @@
 import React from 'react';
 import FontOption from './FontOption';
+import { setFont } from '../../features/font_features/font';
 
 function FontMenu() {
   const fontOptions = [
@@ -29,6 +30,19 @@ function FontMenu() {
             {index < fontOptions.length - 1 && <hr className='border-1 border-white' />}
           </React.Fragment>
         ))}
+        {/* Drop down menu to select font */}
+        <div className='flex items-center justify-between'>
+          <label className='font-medium'>Font</label>
+          <select
+            className='rounded-md bg-gray-800 p-1 text-white'
+            onChange={(e) => setFont(e.target.value)}
+          >
+            <option value='Arial'>Arial</option>
+            <option value='Comic Sans MS'>Comic Sans MS</option>
+            <option value='Segoe UI'>Segoe UI</option>
+            <option value='Verdana'>Verdana</option>
+          </select>
+        </div>
       </div>
     </div>
   );
