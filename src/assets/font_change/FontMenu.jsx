@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontOption from './FontOption';
 import { setFont } from '../../features/font_features/font';
 
-function FontMenu() {
+function FontMenu({ resetToggle, setResetToggle }) {
   const fontOptions = [
     // { label: 'Zoom', settingLabel: '100%', settingOptions: { min: 50, max: 200 } },
     // kinda pointless to have these options since they are already available in the browser
@@ -11,6 +11,28 @@ function FontMenu() {
     { label: 'Word spacing', settingLabel: '0px', settingOptions: { min: 0, max: 10 } },
     { label: 'Letter spacing', settingLabel: '0px', settingOptions: { min: 0, max: 5 } },
   ];
+
+  useEffect(() => {
+    chrome.storage.local.get(['fontChanged'], (data) => {
+      if (data.fontChanged) {
+        console.log('detect Font changed');
+        if (resetToggle) {
+          chrome.storage.local.set({ fontChanged: false });
+          console.log('Reloading page');
+          chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+            const tabId = tabs[0].id;
+            chrome.scripting.executeScript({
+              target: { tabId },
+              func: () => {
+                window.location.reload();
+              },
+            });
+          });
+        }
+      }
+    });
+    
+  }, [resetToggle]);
 
   return (
     <div className='w-70 h-full text-white shadow-lg'>

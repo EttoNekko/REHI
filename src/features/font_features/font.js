@@ -6,6 +6,7 @@ const setLineHeight = (lineHeight) => {
       css: `* { line-height: ${lineHeight} !important; }`,
     });
   });
+  chrome.storage.local.set({ fontChanged: true });
 };
 
 const setWordSpacing = (wordSpacing) => {
@@ -16,6 +17,7 @@ const setWordSpacing = (wordSpacing) => {
       css: `* { word-spacing: ${wordSpacing}px !important; }`,
     });
   });
+  chrome.storage.local.set({ fontChanged: true });
 };
 
 const setLetterSpacing = (letterSpacing) => {
@@ -26,6 +28,7 @@ const setLetterSpacing = (letterSpacing) => {
       css: `* { letter-spacing: ${letterSpacing}px !important; }`,
     });
   });
+  chrome.storage.local.set({ fontChanged: true });
 };
 
 const setFontSize = (fontSize) => {
@@ -36,6 +39,7 @@ const setFontSize = (fontSize) => {
       css: `* { font-size: ${fontSize}px !important; }`,
     });
   });
+  chrome.storage.local.set({ fontChanged: true });
 };
 
 const setFont = (font) => {
@@ -46,6 +50,7 @@ const setFont = (font) => {
       css: `* { font-family: ${font}, sans-serif !important; }`,
     });
   });
+  chrome.storage.local.set({ fontChanged: true });
 };
 
 export { setLineHeight, setWordSpacing, setLetterSpacing, setFontSize, setFont };
