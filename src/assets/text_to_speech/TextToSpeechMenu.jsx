@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Typography } from '@material-tailwind/react';
 
 const TextToSpeechMenu = ({ resetToggle, setResetToggle }) => {
   const [isActive, setIsActive] = useState(false);
@@ -20,7 +21,13 @@ const TextToSpeechMenu = ({ resetToggle, setResetToggle }) => {
         <h2 className='text-xl font-bold'>Text 2 Speech</h2>
         <button className='absolute right-2 text-lg hover:text-gray-300'>✖</button>
       </div>
-      <p>Insert text2bitch setting Please</p>
+      {/*Body*/}
+      <div className='space-y-5 px-2 py-3'>
+        <Typography color='white'>
+          To Use text 2 speech, highlight the paragraph you need, and rightclick, choose the
+          extension icon
+        </Typography>
+      </div>
     </div>
   );
 };
