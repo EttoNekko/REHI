@@ -3,7 +3,7 @@ const setLineHeight = (lineHeight) => {
     let tabId = tabs[0].id;
     chrome.scripting.insertCSS({
       target: { tabId: tabId, allFrames: true },
-      css: `body { line-height: ${lineHeight} !important; }`,
+      css: `* { line-height: ${lineHeight} !important; }`,
     });
   });
 };
@@ -13,7 +13,7 @@ const setWordSpacing = (wordSpacing) => {
     let tabId = tabs[0].id;
     chrome.scripting.insertCSS({
       target: { tabId: tabId, allFrames: true },
-      css: `body { word-spacing: ${wordSpacing}px !important; }`,
+      css: `* { word-spacing: ${wordSpacing}px !important; }`,
     });
   });
 };
@@ -23,9 +23,29 @@ const setLetterSpacing = (letterSpacing) => {
     let tabId = tabs[0].id;
     chrome.scripting.insertCSS({
       target: { tabId: tabId, allFrames: true },
-      css: `body { letter-spacing: ${letterSpacing}px !important; }`,
+      css: `* { letter-spacing: ${letterSpacing}px !important; }`,
     });
   });
 };
 
-export { setLineHeight, setWordSpacing, setLetterSpacing };
+const setFontSize = (fontSize) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    let tabId = tabs[0].id;
+    chrome.scripting.insertCSS({
+      target: { tabId: tabId, allFrames: true },
+      css: `* { font-size: ${fontSize}px !important; }`,
+    });
+  });
+};
+
+const setFont = (font) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    let tabId = tabs[0].id;
+    chrome.scripting.insertCSS({
+      target: { tabId: tabId, allFrames: true },
+      css: `* { font-family: ${font} !important; }`,
+    });
+  });
+};
+
+export { setLineHeight, setWordSpacing, setLetterSpacing, setFontSize };

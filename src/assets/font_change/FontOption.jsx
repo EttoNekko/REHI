@@ -1,6 +1,6 @@
 import { Typography, IconButton, Slider } from '@material-tailwind/react';
 import React, { useState } from 'react';
-import { setLineHeight, setWordSpacing, setLetterSpacing } from '../../features/font_features/font';
+import { setLineHeight, setWordSpacing, setLetterSpacing, setFontSize} from '../../features/font_features/font';
 
 const FontOption = ({ label, settingLabel, settingOptions }) => {
   const [value, setValue] = useState(settingOptions.min);
@@ -22,6 +22,9 @@ const FontOption = ({ label, settingLabel, settingOptions }) => {
       setLabelValue(newValue, 'px');
     } else if (label === 'Letter spacing') {
       setLetterSpacing(newValue);
+      setLabelValue(newValue, 'px');
+    } else if (label === 'Fontsize') {
+      setFontSize(newValue);
       setLabelValue(newValue, 'px');
     } else {
       console.error('Invalid label');
