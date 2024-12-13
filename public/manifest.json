@@ -6,7 +6,15 @@
   "icons": {
     "48": "icons/icon.png"
   },
-  "background": {},
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["content.js"]
+    }
+  ],
   "action": {
     "default_popup": "index.html",
     "default_icon": {

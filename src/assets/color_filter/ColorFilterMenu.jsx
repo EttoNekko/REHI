@@ -8,6 +8,8 @@ const ColorFilterMenu = () => {
   const [g, setG] = useState(128);
   const [b, setB] = useState(128);
   const [focus, setFocus] = useState(50);
+  // const [currentX, setCurrentX] = useState(0);
+  // const [currentY, setCurrentY] = useState(500);
 
   const handleSliderChange = (event) => {
     const name = event.target.className;
@@ -35,17 +37,29 @@ const ColorFilterMenu = () => {
     if (!isFilterActive) {
       setIsFilterActive(true);
     }
-    color_filter(r, g, b, alpha, focus);
+    // color_filter(r, g, b, alpha, focus, 0, 500);
+    // chrome.runtime.sendMessage({messageId: 'colorFilter', r: r, g: g, b: b, alpha: alpha, focus: focus});
+    chrome.runtime.sendMessage({messageId: 'toggleVisor', active: 'on'});
     console.log(r, g, b, alpha);
   };
 
   useEffect(() => {
     // Check if the filter is active when the component mounts
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    async () => {
+      let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      console.log("cac", tab.id);
       chrome.scripting.executeScript(
         {
-          target: { tabId: tabs[0].id },
+          target: { tabId: tab.id },
           func: () => {
+            // window.onmousemove = (event) => {
+            //   console.log(`Mouse moved to: (${event.clientX}, ${event.clientY})`);
+            //   clientX = event.clientX;
+            //   clientY = event.clientY;
+            //   // TODO: Send the mouse coordinates to the background script
+            //   // color_filter(r, g, b, alpha, focus, currentX, currentY);
+            // };
+  
             const overlay = document.querySelector('.color-filter');
             if (overlay) {
               console.log(getComputedStyle(overlay).backgroundColor, 'useEffect');
@@ -54,16 +68,26 @@ const ColorFilterMenu = () => {
               const currentB = parseFloat(getComputedStyle(overlay).backgroundColor.split(',')[2]);
               const currentAlpha = parseFloat(getComputedStyle(overlay).backgroundColor.split(',')[3]);
               console.log(currentR, currentG, currentB, currentAlpha, 'useEffect');
-              
-              return { isActive: true, r: currentR, g: currentG, b: currentB, alpha: currentAlpha };
+  
+              return { isActive: true, r: currentR, g: currentG, b: currentB, alpha: currentAlpha};
             }
-            return { isActive: false, r: 128, g: 128, b: 128, alpha: 0.3 };
+            return { isActive: false, r: 128, g: 128, b: 128, alpha: 0};
           },
         },
         (results) => {
+          // if (!results[0].result) {
+          //   console.log("inject");
+          //   chrome.runtime.sendMessage({ inject: tab.id });
+          //   chrome.scripting.executeScript({
+          //     target: { tabId: tab.id },
+          //     func: () => {
+          //       window.__visorScriptInjected = true;
+          //     },
+          //   });
+          // }
           if (results && results[0] && results[0].result) {
             const isActive = results[0].result;
-            console.log(isActive);
+            console.log(results[0].result, 'useEffect');
             setIsFilterActive(isActive);
             setR(parseInt(results[0].result.r));
             setG(parseInt(results[0].result.g));
@@ -72,16 +96,59 @@ const ColorFilterMenu = () => {
           }
         }
       );
-    });
+    };
   }, []);
+  
+  
+  // useEffect(() => {
+  //   // Constantly query currentY for color_filter
+  //   const interval = setInterval(() => {
+  //     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  //       chrome.scripting.executeScript(
+  //         {
+  //           target: { tabId: tabs[0].id },
+  //           func: () => {
+  //             let clientX = 0;
+  //             let clientY = 500;
+
+  //             return new Promise((resolve) => {
+  //               const handleMouseMove = (event) => {
+  //                 const clientX = event.clientX;
+  //                 const clientY = event.clientY;
+  //                 window.removeEventListener('mousemove', handleMouseMove);
+  //                 resolve({ clientX, clientY });
+  //               };
+  //               window.addEventListener('mousemove', handleMouseMove);
+  //             });
+  //           },
+  //         },
+  //         (results) => {
+  //           if (results && results[0] && results[0].result) {
+  //             const { clientX, clientY } = results[0].result;
+  //             setCurrentX(clientX);
+  //             setCurrentY(clientY);
+  //             if (isFilterActive) {
+  //               console.log("vai con cac o ", clientX, clientY);
+  //               color_filter(r, g, b, alpha, focus, clientX, clientY);
+  //             }
+  //           }
+  //         }
+  //       );
+  //     });
+  //   }, 16); // Adjust the interval time as needed
+
+  //   return () => clearInterval(interval);
+  // }, [isFilterActive, r, g, b, alpha, focus];
 
   const handleCheckboxChange = (event) => {
     const isChecked = event.target.checked;
     setIsFilterActive(isChecked);
     if (isChecked) {
-      color_filter(r, g, b, alpha, focus);
+      // color_filter(r, g, b, alpha, focus, currentX, currentY);
+      chrome.runtime.sendMessage({messageId: 'toggleVisor', active: 'on'});
     } else {
-      color_filter(128, 128, 128, 0.3, 50);
+      // color_filter(128, 128, 128, 0, 50, 0, 500);
+      chrome.runtime.sendMessage({messageId: 'toggleVisor', active: 'off'});
     }
   };
 
@@ -93,7 +160,7 @@ const ColorFilterMenu = () => {
         <button className='absolute right-2 text-lg hover:text-gray-300'>✖</button>
       </div>
       {/* Toggle checkbox */}
-      <label className='flex items-center space-x-2'>
+      <label className='flex items-center space-x-2' id='color-filter-checkbox'>
         <input
           type='checkbox'
           checked={isFilterActive}
